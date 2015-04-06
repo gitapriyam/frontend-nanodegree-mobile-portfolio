@@ -16,9 +16,6 @@ Cameron Pittman, Udacity Course Developer
 cameron *at* udacity *dot* com
 */
 
-var phaseShiftList = [];
-var randomPizzaContainerCss = null;
-
 // As you may have realized, this website randomly generates pizzas.
 // Here are arrays of all possible pizza ingredients.
 var pizzaIngredients = {};
@@ -402,18 +399,6 @@ var pizzaElementGenerator = function (i) {
 };
 
 
-// used for finding .randomPizzaContainer
-function findCssRule(sel) {
-    for (var i = 0; i < document.styleSheets.length; i++) {
-        for (var j = 0; j < document.styleSheets[i].cssRules.length; j++) {
-            if (document.styleSheets[i].cssRules[j].selectorText == sel) {
-                return document.styleSheets[i].cssRules[j];
-            }
-        }
-    }
-    return null;  // rule not found
-}
-
 // resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
 var resizePizzas = function (size) {
     window.performance.mark("mark_start_resize");   // User Timing API function
@@ -467,12 +452,13 @@ var resizePizzas = function (size) {
 
     // Iterates through pizza elements on the page and changes their widths
 
-    /*  Ramesh
+    /*
         This has been changed to make the rendering faster
         I have employed JQuery to adjust the width of 
         container.
     */
     function changePizzaSizes(size) {
+        var allRandomPizzaContainers = document.querySelectorAll(".randomPizzaContainer");
         var dx = determineDx(allRandomPizzaContainers[0], size);        
         var newwidth = (allRandomPizzaContainers[0].offsetWidth + dx) + 'px';
         $(".randomPizzaContainer").css("width", newwidth);       
@@ -591,6 +577,9 @@ function updatePizzaPositions() {
     }
     updatePositions();
 }
+
+/* This is for storing the phase shifts externally */
+var phaseShiftList = [];
 
 // runs updatePositions on scroll (updated by Ramesh)
 window.addEventListener('scroll', updatePizzaPositions);

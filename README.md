@@ -48,4 +48,4 @@ This has been accomplished using JQuery.
 main.js function changePizzaSizes has been changed to incorporate JQuery
 to improve efficiency.
 The console output got for resizing the pizzas is
-Time to resize pizzas: 2.0399999993969686ms
+Time to resize pizzas: 2.440000003844034ms
