@@ -458,7 +458,7 @@ var resizePizzas = function (size) {
         container.
     */
     function changePizzaSizes(size) {
-        var allRandomPizzaContainers = document.querySelectorAll(".randomPizzaContainer");
+        var allRandomPizzaContainers = document.getElementsByClassName("randomPizzaContainer");
         var dx = determineDx(allRandomPizzaContainers[0], size);        
         var newwidth = (allRandomPizzaContainers[0].offsetWidth + dx) + 'px';
         $(".randomPizzaContainer").css("width", newwidth);       
@@ -531,11 +531,17 @@ function updatePositions() {
     frame++;
     window.performance.mark("mark_start_frame");
 
-    var items = document.querySelectorAll('.mover');
-    for (var i = 0; i < items.length; i++) {
-        //var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
+    var items = document.getElementsByClassName('mover');
+    var length = items.length;
+    for (var i = 0; i < length; i++) {
+        var style = items[i].style;
         var phase = getPhaseShift(i % 5);
-        items[i].style.left = items[i].style.basicLeft + Math.ceil(100 * phase) + 'px';
+        if (!style.basicLeft) {
+            var pizzaColumns = getPizzaColumns();
+            style.basicLeft = document.body.scrollLeft + ((i % pizzaColumns) * getPizzaWidth());
+        }
+
+        style.left = style.basicLeft + Math.ceil(100 * phase) + 'px';
     }
 
     // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -555,12 +561,35 @@ function updatePositions() {
     painted.
 */
 
-function updatePizzaPositions() {
-    var pizzaBoxHeight = 256;
-    var pizzaBoxWidth = 256;
+/* returns the Pizza box width */
+function getPizzaWidth() {
+    return 256;
+}
 
-    var pizzaRows = Math.ceil(window.innerHeight / pizzaBoxHeight);
-    var pizzaCols = Math.ceil(window.innerWidth / pizzaBoxWidth);
+/* returns the Pizza box height */
+function getPizzaHeight() {
+    return 256;
+}
+
+/* returns the numbers of pizzas rows depending the window height */
+
+function getPizzaRows() {
+    return Math.ceil(window.innerHeight / getPizzaHeight());
+}
+
+/* returns the numbers of pizzas columns depending the window width */
+function getPizzaColumns(){
+    return Math.ceil(window.innerWidth / getPizzaWidth());
+}
+
+
+
+function initPizzaPositions() {
+    var pizzaBoxHeight = getPizzaHeight();
+    var pizzaBoxWidth = getPizzaWidth();
+
+    var pizzaRows = getPizzaRows();
+    var pizzaCols = getPizzaColumns();
 
     var movingPizzasContainer = document.querySelector("#movingPizzas1");
     movingPizzasContainer.innerHTML = "";
@@ -582,10 +611,10 @@ function updatePizzaPositions() {
 var phaseShiftList = [];
 
 // runs updatePositions on scroll (updated by Ramesh)
-window.addEventListener('scroll', updatePizzaPositions);
+window.addEventListener('scroll', updatePositions);
 
 // runs updatePositions on resize (updated by Ramesh)
-window.addEventListener('resize', updatePizzaPositions);
+window.addEventListener('resize', initPizzaPositions);
 
 // runs updatePositions on page loading (updated by Ramesh)
-document.addEventListener('DOMContentLoaded', updatePizzaPositions);
+document.addEventListener('DOMContentLoaded', initPizzaPositions);
